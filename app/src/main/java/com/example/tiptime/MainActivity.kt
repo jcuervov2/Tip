@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -67,8 +68,10 @@ class MainActivity : ComponentActivity() {
 fun TipTimeLayout() {
 
     var amountInput by remember { mutableStateOf("") }
+    var tipAmount by remember { mutableStateOf("") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+    val tipPercent = tipAmount.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount, tipPercent)
 
 
     Column(
@@ -83,8 +86,17 @@ fun TipTimeLayout() {
                 .align(alignment = Alignment.Start)
         )
         EditNumberField(
+            label = R.string.bill_amount,
             value = amountInput,
-            onValueChange = { amountInput = it},
+            onValueChange = { amountInput = it },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
+        EditNumberField(
+            label = R.string.how_was_the_service,
+            value = tipAmount,
+            onValueChange = { tipAmount = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
@@ -100,16 +112,18 @@ fun TipTimeLayout() {
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun EditNumberField(
-    value : String,
+    @StringRes label: Int,
+    value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
 
 
     TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        label = { Text(stringResource(id = R.string.bill_amount)) },
+        label = { Text(stringResource(id = label)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
